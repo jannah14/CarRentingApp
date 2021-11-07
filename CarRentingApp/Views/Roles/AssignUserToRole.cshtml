@@ -1,0 +1,21 @@
+﻿@using CarRentingApp.ViewModels;
+
+@model AssignUsersToRolesViewModel;
+@{
+}
+
+
+@using (Html.BeginForm("AssignUserToRole", "Roles"))
+{
+    <div class="form-group">
+        @Html.LabelFor(m => m.AddToRole.Role)
+        @Html.DropDownListFor(m => m.AddToRole.Role, new SelectList(Model.Roles), "Select a role", new { @class = "form-control" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.AddToRole.UserEmail)
+        @Html.TextBoxFor(m => m.AddToRole.UserEmail, new { @class = "form-control" })
+    </div>
+
+    <button class="btn btn-primary"> Submit </button>
+}
