@@ -45,7 +45,11 @@ namespace CarRentingApp
             });
             */
 
+            //register IRepository-Repository
             services.RegisterRepositories();
+
+            //register automapper 
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
         }
 

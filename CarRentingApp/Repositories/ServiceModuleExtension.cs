@@ -1,4 +1,4 @@
-﻿using CarRentingApp.Repositories.UserRepo;
+﻿using CarRentingApp.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -12,6 +12,7 @@ namespace CarRentingApp.Repositories
         public static void RegisterRepositories(this IServiceCollection serviceCollection)
         {
             serviceCollection.AddTransient<IUserRepository, UserRepository>();
+            serviceCollection.AddTransient<IRoleRepository, RoleRepository>();
         }
     }
 }

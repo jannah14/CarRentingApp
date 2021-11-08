@@ -1,0 +1,52 @@
+﻿@model CarRentingApp.DTOs.UpdateUserDTO;
+
+@{
+    ViewData["Title"] = "Update User";
+}
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="UpdateUser" method="post">
+            <h4>Update @Model.Username data.</h4>
+            <hr />
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="@Model.Firstname"></label>
+                <input asp-for="@Model.Firstname" class="form-control" />
+                <span asp-validation-for="@Model.Firstname" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.Lastname"></label>
+                <input asp-for="@Model.Lastname" class="form-control" />
+                <span asp-validation-for="@Model.Lastname" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.Birthday"></label>
+                <input asp-for="@Model.Birthday" class="form-control" />
+                <span asp-validation-for="@Model.Birthday" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.PhoneNumber"></label>
+                <input asp-for="@Model.PhoneNumber" class="form-control" />
+                <span asp-validation-for="@Model.PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.Username"></label>
+                <input asp-for="@Model.Username" class="form-control" />
+                <span asp-validation-for="@Model.Username" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.Role"></label>
+                <select asp-for="@Model.Role" asp-items="@(new SelectList(Model.AllRoles))"> class="form-control"> </select>
+                <span asp-validation-for="@Model.Role" class="text-danger"></span>
+            </div>
+            @Html.HiddenFor(m => m.Id)
+
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

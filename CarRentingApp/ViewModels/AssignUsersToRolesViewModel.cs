@@ -1,5 +1,4 @@
 ﻿using CarRentingApp.Areas.Identity.Data;
-using CarRentingApp.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +11,6 @@ namespace CarRentingApp.ViewModels
      
         public AddtoRole AddToRole { get; set; }
         public List<string> Roles { get; set; }
-        public List<MinUserDTO> Users { get; set; }
     }
 
     public class AddtoRole

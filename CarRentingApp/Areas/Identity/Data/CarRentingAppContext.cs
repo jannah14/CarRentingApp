@@ -15,8 +15,7 @@ namespace CarRentingApp.Data
             : base(options)
         {
         }
-
-
+        
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -24,5 +23,7 @@ namespace CarRentingApp.Data
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
         }
+
+        
     }
 }
