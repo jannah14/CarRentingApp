@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CarRentingApp.Areas.Identity.Data;
+using CarRentingApp.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,12 @@ namespace CarRentingApp.Data
             // Add your customizations after calling base.OnModelCreating(builder);
         }
 
+
+        DbSet<VehicleModel> VehicleModels { get; set; }
+
+        DbSet<Vehicle> Vehicles { get; set; }
+
+        DbSet<Rentals> Rentals { get; set; }
         
     }
 }
