@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using CarRentingApp.Data;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using CarRentingApp.Validation;
 
 namespace CarRentingApp.Areas.Identity.Pages.Account
 {
@@ -60,7 +61,7 @@ namespace CarRentingApp.Areas.Identity.Pages.Account
 
             [Required]
             [DataType(DataType.Date)]
-            //[Remote(action: "VerifyBirthday", controller: "User")]
+            [Min18YearsOld]
             [Display(Name = "Birthday")]
             
             public DateTime Birthday { get; set; }
