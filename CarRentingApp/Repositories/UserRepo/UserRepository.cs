@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using AutoMapper;
 using static CarRentingApp.Areas.Identity.Pages.Account.RegisterModel;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.Extensions.Logging;
 
 namespace CarRentingApp.Repositories 
 { 
@@ -18,12 +19,14 @@ namespace CarRentingApp.Repositories
         private readonly CarRentingAppContext _dbContext;
         private readonly UserManager<AppUser> _userManager;
         private readonly IMapper _mapper;
+        private readonly ILogger _logger;
 
-        public UserRepository(CarRentingAppContext dbContext, UserManager<AppUser> userManager, IMapper mapper)
+        public UserRepository(CarRentingAppContext dbContext, UserManager<AppUser> userManager, IMapper mapper, ILogger<UserRepository> logger)
         {
             _dbContext = dbContext;
             _userManager = userManager;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<bool> CreateUser(InputModel user)
@@ -55,7 +58,7 @@ namespace CarRentingApp.Repositories
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                _logger.LogError(e.Message);
 
             }
 
@@ -69,13 +72,16 @@ namespace CarRentingApp.Repositories
             {
                 var user = await _userManager.FindByIdAsync(userId);
 
+                //delete all rentals created by the user
+                var rentals = await _dbContext.Database.ExecuteSqlInterpolatedAsync($"Delete from Rentals where AppUserId = {userId}");
+
                 await _userManager.DeleteAsync(user);
 
                 return true;
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                _logger.LogError(e.Message);
             }
 
             return false;
@@ -158,7 +164,7 @@ namespace CarRentingApp.Repositories
             }
             catch(Exception e)
             {
-                Console.WriteLine(e);
+                _logger.LogError(e.Message);
             }
 
             return false;

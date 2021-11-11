@@ -3,6 +3,7 @@ using CarRentingApp.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -15,11 +16,13 @@ namespace CarRentingApp.Controllers
     {
         private readonly IUserRepository _userRepo;
         private readonly IRoleRepository _roleRepo;
+        private readonly ILogger _logger;
 
-        public UserController(IUserRepository userRepo, IRoleRepository roleRepo)
+        public UserController(IUserRepository userRepo, IRoleRepository roleRepo, ILogger<UserController> logger)
         {
             _userRepo = userRepo;
             _roleRepo = roleRepo;
+            _logger = logger;
         }
 
         
@@ -49,6 +52,7 @@ namespace CarRentingApp.Controllers
 
             if (result)
             {
+                _logger.LogInformation("User with {id} has been deleted", new { identifier.UserId });
                 return Ok();
             }
 
@@ -100,6 +104,7 @@ namespace CarRentingApp.Controllers
             var result = await _userRepo.CreateUser(newUser);
             if (result)
             {
+                _logger.LogInformation("A new user was created.");
                 return RedirectToAction("GetUsers");
             }
 
@@ -108,17 +113,6 @@ namespace CarRentingApp.Controllers
 
 
         //validations
-        [AcceptVerbs("GET", "POST", "PUT", "PATCH")]
-        public  IActionResult VerifyBirthday(InputModel user)
-        {
-            if ((DateTime.Now.Year - user.Birthday.Year) >= 18)
-            {
-                return Json(true);
-            }
-
-            return Json("You should be at least 18 years old to register!");
-        }
-
         [AcceptVerbs("GET", "POST", "PUT")]
         public  IActionResult VerifyUpdateBirthday(UpdateUserDTO user)
         {

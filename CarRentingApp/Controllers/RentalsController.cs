@@ -3,6 +3,7 @@ using CarRentingApp.Repositories;
 using CarRentingApp.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,13 +16,15 @@ namespace CarRentingApp.Controllers
     {
         private readonly IVehicleRepository _vehicleRepo;
         private readonly IRentalRepository _rentalRepository;
+        private readonly ILogger _logger;
 
         
 
-        public RentalsController(IVehicleRepository vehicleRepo, IRentalRepository rentalRepository)
+        public RentalsController(IVehicleRepository vehicleRepo, IRentalRepository rentalRepository, ILogger<RentalsController> logger)
         {
             _vehicleRepo = vehicleRepo;
             _rentalRepository = rentalRepository;
+            _logger = logger;
         }
 
         [Authorize(Roles ="User")]
@@ -68,6 +71,7 @@ namespace CarRentingApp.Controllers
 
             if (result)
             {
+                _logger.LogInformation("New rental is created");
                 return Ok();
             }
             return BadRequest();
@@ -107,6 +111,7 @@ namespace CarRentingApp.Controllers
 
             if (result)
             {
+                _logger.LogInformation("Rental deleted from the database.");
                 return Ok();
             }
 
@@ -136,6 +141,7 @@ namespace CarRentingApp.Controllers
 
             if (result)
             {
+                _logger.LogInformation("Rental approved.");
                 return Ok();
             }
 
@@ -154,6 +160,7 @@ namespace CarRentingApp.Controllers
 
             if (result)
             {
+                _logger.LogInformation("Rental rejected.");
                 return Ok();
             }
 
@@ -181,6 +188,7 @@ namespace CarRentingApp.Controllers
 
             if (result)
             {
+                _logger.LogInformation("Admin updated user's data");
                 return RedirectToAction("UserRentals");
             }
 

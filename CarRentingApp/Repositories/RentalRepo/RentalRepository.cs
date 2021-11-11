@@ -3,6 +3,7 @@ using CarRentingApp.Data;
 using CarRentingApp.DTOs;
 using CarRentingApp.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +15,13 @@ namespace CarRentingApp.Repositories
     {
         private readonly CarRentingAppContext _dbContext;
         private readonly IMapper _mapper;
+        private readonly ILogger _logger;
 
-        public RentalRepository(CarRentingAppContext dbContext, IMapper mapper)
+        public RentalRepository(CarRentingAppContext dbContext, IMapper mapper, ILogger<RentalRepository> logger)
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<bool> ApplyForRent(CreateRentalDTO rentalDTO)
@@ -39,7 +42,7 @@ namespace CarRentingApp.Repositories
             catch (Exception e)
             {
 
-                Console.WriteLine(e);
+                _logger.LogError(e.Message);
             }
 
 
@@ -49,23 +52,30 @@ namespace CarRentingApp.Repositories
 
         public async Task<bool> Approve(int rentalId, string loggedUser)
         {
+            try
+            {
+                var affecteddRows = _dbContext.Database.ExecuteSqlInterpolated($"Update Rentals Set Status = {RentalStatus.Approved} where Id = {rentalId}");
+                return affecteddRows > 0 ? true : false;
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e.Message);
+            }
 
-            var affecteddRows = _dbContext.Database.ExecuteSqlCommand($"Update Rentals Set Status = {RentalStatus.Approved} where Id = {rentalId}");
-
-            return affecteddRows > 0 ? true : false;
+            return false;
         }
 
         public async Task<bool> DeleteRental(int rentalId, string loggedUser)
         {
             try
             {
-                var deletedRows = _dbContext.Database.ExecuteSqlCommand($"Delete from Rentals where Id = {rentalId} and AppUserId = {loggedUser}");
+                var deletedRows = _dbContext.Database.ExecuteSqlInterpolated($"Delete from Rentals where Id = {rentalId} and AppUserId = {loggedUser}");
 
                 return true;
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                _logger.LogError(e.Message);
             }
 
             return false;
@@ -74,9 +84,19 @@ namespace CarRentingApp.Repositories
 
         public async Task<bool> Edit(EditRentalDTO rentalDTO)
         {
-            var updatedRows = _dbContext.Database.ExecuteSqlCommand($"Update Rentals Set StartDate = {rentalDTO.StartDate}, EndDate = {rentalDTO.EndDate}, VehicleId = {rentalDTO.VehicleId} where Id = {rentalDTO.Id}");
+            try
+            {
+                var updatedRows = _dbContext.Database.ExecuteSqlInterpolated($"Update Rentals Set StartDate = {rentalDTO.StartDate}, EndDate = {rentalDTO.EndDate}, VehicleId = {rentalDTO.VehicleId} where Id = {rentalDTO.Id}");
 
-            return updatedRows > 0;
+                return updatedRows > 0;
+            }
+            catch (Exception e)
+            {
+
+                _logger.LogError(e.Message);
+            }
+
+            return false;
         }
 
         public async Task<IEnumerable<AgentRentalsDTO>> GetAgentRentals(string userId)
@@ -111,7 +131,13 @@ namespace CarRentingApp.Repositories
                              Status = r.Status,
                              RejectionReason = r.RejectionReason
                          };
-            return rental.FirstOrDefault();
+            if (rental.Any())
+            {
+                return rental.FirstOrDefault();
+            }
+
+            return null;
+            
         }
 
         public async Task<IEnumerable<UserRentalsDTO>> GetUserRentals(string userId, byte? filterByStatus)
@@ -140,9 +166,17 @@ namespace CarRentingApp.Repositories
 
         public async Task<bool> Reject(int rentalId, string loggedUser, string rejectionReason)
         {
-            var affecteddRows = _dbContext.Database.ExecuteSqlCommand($"Update Rentals Set Status = {RentalStatus.Rejected}, RejectionReason= {rejectionReason} where Id = {rentalId}");
+            try
+            {
+                var affecteddRows = _dbContext.Database.ExecuteSqlInterpolated($"Update Rentals Set Status = {RentalStatus.Rejected}, RejectionReason= {rejectionReason} where Id = {rentalId}");
 
-            return affecteddRows > 0;
+                return affecteddRows > 0;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+            }
+            return false;
         }
 
         public async Task<bool> IsAvailable(DateTime startDate, DateTime endDate, int vehicleId)
@@ -153,6 +187,7 @@ namespace CarRentingApp.Repositories
                       (r.StartDate <= endDate && r.EndDate >= startDate)
                       group r by r.VehicleId into groupedRentals
                       select groupedRentals.Count()).FirstOrDefaultAsync();
+
             var available = await _dbContext.Vehicles.FirstOrDefaultAsync(v => v.Id == vehicleId && v.ItemsInStock > sql);
 
             return available != null; 
