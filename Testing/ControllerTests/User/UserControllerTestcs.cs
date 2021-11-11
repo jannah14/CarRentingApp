@@ -19,7 +19,7 @@ namespace Testing.ControllerTests.User
         {
             _userF = userF;
 
-            _sut = new UserController(_userF._userRepoMock.Object, _userF._roleRepoMock.Object);
+            _sut = new UserController(_userF._userRepoMock.Object, _userF._roleRepoMock.Object, _userF._loggerMock.Object);
         }
 
 

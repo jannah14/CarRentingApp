@@ -15,7 +15,7 @@ namespace Testing.RepositoryTests
         public RentalRepoTest(GenericFixture fixture)
         {
             _fixture = fixture;
-            _sut = new RentalRepository(_fixture.CreateContext(), _fixture._mapperMock.Object);
+            _sut = new RentalRepository(_fixture.CreateContext(), _fixture._mapperMock.Object, _fixture._loggerMock.Object);
         }
 
 

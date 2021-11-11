@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using CarRentingApp.Areas.Identity.Data;
 using CarRentingApp.Data;
+using CarRentingApp.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -22,6 +24,7 @@ namespace Testing.RepositoryTests
         //public Mock<RoleManager<IdentityRole>> _roleManagerMock { get; set; }
 
         public Mock<IMapper> _mapperMock { get; set; }
+        public Mock<ILogger<RentalRepository>> _loggerMock { get; set; }
 
         public GenericFixture()
         {
@@ -32,6 +35,7 @@ namespace Testing.RepositoryTests
             //_userManagerMock = new Mock<UserManager<AppUser>>();
             //_roleManagerMock = new Mock<RoleManager<IdentityRole>>();
             _mapperMock = new Mock<IMapper>();
+            _loggerMock = new Mock<ILogger<RentalRepository>>();
         }
 
         public DbConnection Connection { get; }
