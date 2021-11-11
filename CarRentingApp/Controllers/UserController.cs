@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using static CarRentingApp.Areas.Identity.Pages.Account.RegisterModel;
 
@@ -26,7 +27,8 @@ namespace CarRentingApp.Controllers
         [HttpGet]
         public async Task<IActionResult> GetUsers()
         {
-            var users = await _userRepo.GetUsers();
+            var adminId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var users = await _userRepo.GetUsers(adminId);
 
             if(users == null)
             {
@@ -40,6 +42,9 @@ namespace CarRentingApp.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete(Identifier identifier)
         {
+            if (identifier.UserId == null || identifier.UserId == "")
+                return BadRequest();
+            
             var result = await _userRepo.DeleteUser(identifier.UserId);
 
             if (result)
@@ -52,9 +57,9 @@ namespace CarRentingApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> UpdateUser(string UserId)
+        public async Task<IActionResult> UpdateUser(string userId)
         {
-            var user = await _userRepo.GetUserById(UserId);
+            var user = await _userRepo.GetUserById(userId);
 
             if(user != null)
             {
@@ -70,6 +75,8 @@ namespace CarRentingApp.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateUser(UpdateUserDTO user)
         {
+            if(user.Id == null || user.Id == "" || user.Role == null || user.Role == "")
+                return BadRequest();
             var result = await _userRepo.UpdateUser(user);
 
             if (result)
@@ -101,7 +108,7 @@ namespace CarRentingApp.Controllers
 
 
         //validations
-        [AcceptVerbs("GET", "POST")]
+        [AcceptVerbs("GET", "POST", "PUT", "PATCH")]
         public  IActionResult VerifyBirthday(InputModel user)
         {
             if ((DateTime.Now.Year - user.Birthday.Year) >= 18)
@@ -113,7 +120,7 @@ namespace CarRentingApp.Controllers
         }
 
         [AcceptVerbs("GET", "POST", "PUT")]
-        public  IActionResult VerifyBirthday(UpdateUserDTO user)
+        public  IActionResult VerifyUpdateBirthday(UpdateUserDTO user)
         {
             if ((DateTime.Now.Year - user.Birthday.Year) >= 18)
             {

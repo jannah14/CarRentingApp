@@ -28,7 +28,7 @@
          @foreach (var user in Model)
          {
                  <tr> 
-                    <td> @Html.ActionLink(user.Firstname + " " + user.Lastname, "UpdateUser", new { UserId = user.Id }) </td>  
+                    <td> @Html.ActionLink(user.Firstname + " " + user.Lastname, "UpdateUser", new { userId = user.Id }) </td>  
                      <td> @user.Birthday </td>  
                      <td> @user.PhoneNumber </td>  
                      <td> @user.Email </td>  

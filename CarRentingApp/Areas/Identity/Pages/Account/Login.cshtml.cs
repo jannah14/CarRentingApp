@@ -86,23 +86,23 @@ namespace CarRentingApp.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User logged in.");
 
-                    //redirect the user based on the role
-                    //var appUser = await _userManager.FindByIdAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    //riderct the user based on the Role
+                    var user = await _signInManager.UserManager.FindByEmailAsync(Input.Email);
 
-                    //if (await _userManager.IsInRoleAsync(appUser, "Admin"))
-                    //{
-                    //    return LocalRedirect("~/user/getusers");
-                    //}
-                    //else if (await _userManager.IsInRoleAsync(appUser, "Agent"))
-                    //{
-                    //    return LocalRedirect("~/rentals/agentrentals");
-                    //}
-                    //else
-                    //{
-                    //    return LocalRedirect("~/rentals/index");
-                    //}
-                    
-                    return LocalRedirect(returnUrl);
+                    if ( await _userManager.IsInRoleAsync(user, "Admin"))
+                    {
+                        return LocalRedirect("~/user/getusers");
+                    }
+                    else if (await _userManager.IsInRoleAsync(user, "Agent"))
+                    {
+                        return LocalRedirect("~/rentals/agentrentals");
+                    }
+                    else
+                    {
+                        return LocalRedirect("~/rentals/index");
+                    }
+
+                    //return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
                 {

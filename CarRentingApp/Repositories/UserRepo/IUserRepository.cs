@@ -7,7 +7,7 @@ namespace CarRentingApp.Repositories
 {
     public interface IUserRepository
     {
-        Task<List<AllUserDTO>> GetUsers(); //return data for all the users in the database
+        Task<List<AllUserDTO>> GetUsers(string adminId); //return data for all the users in the database
 
         Task<UpdateUserDTO> GetUserById(string userId); //return data for one use based on Id
 

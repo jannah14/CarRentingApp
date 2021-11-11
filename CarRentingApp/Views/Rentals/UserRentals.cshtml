@@ -52,13 +52,13 @@
                     @switch (rental.Status)
                     {
                         case (byte)RentalStatus.Approved:
-                            <label class="btn btn-success"> Approved </label>;
+                            <label style="background-color:green; color:white"> Approved </label>;
                             break;
                         case (byte)RentalStatus.Pending:
-                            <label class="btn btn-secondary"> Pending </label>;
+                            <label style="background-color: gray; color: white"> Pending </label>;
                             break;
                         case (byte)RentalStatus.Rejected:
-                            <label class="btn btn-danger"> Rejected </label>;
+                            <label style="background-color: red; color: white"> Rejected </label>;
                             break;
                     }
                 </td>
@@ -147,6 +147,7 @@
 
                             let today = new Date(Date.now());
                             let todayDate = today.toJSON();
+                            var bckgColor = "";
 
                             for (var i = 0; i < response.length; i++) {
                                 var o = response[i];
@@ -155,9 +156,11 @@
                                 switch (o.status) {
                                     case 0:
                                         status = "Pending";
+                                        bckgColor="gray"
                                         break;
                                     case 1:
                                         status = "Approved";;
+                                        bckgColor = "green"
 
                                         var start = new Date(Date.parse(o.startDate));
                                         var end = new Date(Date.parse(o.endDate));
@@ -173,6 +176,7 @@
                                         break;
                                     case 2:
                                         status = "Rejected";
+                                        bckgColor="red"
                                         break;
                                 }
                                 
@@ -180,7 +184,7 @@
                                     '</td><td>' + o.startDate +
                                     '</td><td>' + o.endDate +
                                     '</td><td>' + o.totalPrice + '</td>' +
-                                    '<td>' + status + '</td>' +
+                                    '<td><label style="background-color:' + bckgColor+';color:white">' + status + '</label></td>' +
                                     '<td>' + o.agent + '</td>' +
                                     '<td>' + (daysLeft ? daysLeft : '') + '</td>' +
                                     '<td><button data-rental-id="' + o.id + '"class="btn btn-info js-edit" > Edit </button></td>' +

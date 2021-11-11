@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CarRentingApp.DTOs
 {
@@ -17,7 +17,7 @@ namespace CarRentingApp.DTOs
         public string Lastname { get; set; }
         
         [DataType(DataType.Date)]
-        //[Remote(action: "VerifyBithday", controller: "User")]
+        [Remote(action: "VerifyUpdateBirthday", controller: "User")]
         public DateTime Birthday { get; set; }
         
         [Display(Name = "Phone Number")]

@@ -60,8 +60,9 @@ namespace CarRentingApp.Areas.Identity.Pages.Account
 
             [Required]
             [DataType(DataType.Date)]
+            //[Remote(action: "VerifyBirthday", controller: "User")]
             [Display(Name = "Birthday")]
-            [Remote(action: "VerifyBithday", controller: "User")]
+            
             public DateTime Birthday { get; set; }
 
             [Required]
@@ -78,11 +79,6 @@ namespace CarRentingApp.Areas.Identity.Pages.Account
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
-
-            //[Required]
-            //[DataType(DataType.Text)]
-            //[Display(Name = "Username")]
-            //public string UserName { get; set; }
 
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]

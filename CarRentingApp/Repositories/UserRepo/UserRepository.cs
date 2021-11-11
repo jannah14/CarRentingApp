@@ -17,17 +17,13 @@ namespace CarRentingApp.Repositories
     {
         private readonly CarRentingAppContext _dbContext;
         private readonly UserManager<AppUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IMapper _mapper;
-        private readonly IEmailSender _emailSender;
 
-        public UserRepository(CarRentingAppContext dbContext, UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, IMapper mapper, IEmailSender emailSender)
+        public UserRepository(CarRentingAppContext dbContext, UserManager<AppUser> userManager, IMapper mapper)
         {
             _dbContext = dbContext;
             _userManager = userManager;
-            _roleManager = roleManager;
             _mapper = mapper;
-            _emailSender = emailSender;
         }
 
         public async Task<bool> CreateUser(InputModel user)
@@ -40,12 +36,20 @@ namespace CarRentingApp.Repositories
 
                 //set email verified by default
                 appUser.EmailConfirmed = true;
+                //set username as email
+                appUser.UserName = newAppUser.Email;
+
 
                 //create new user with password
                 await _userManager.CreateAsync(appUser, user.Password);
 
-                 // set a user with role User by default
+                //add user in db
+                _dbContext.Users.Add(appUser);
+
+                // set a user with role User by default
                 await _userManager.AddToRoleAsync(appUser, "User");
+
+                await _dbContext.SaveChangesAsync();
 
                 return true;
             }
@@ -102,11 +106,12 @@ namespace CarRentingApp.Repositories
             return null;
         }
 
-        public async Task<List<AllUserDTO>> GetUsers()
+        public async Task<List<AllUserDTO>> GetUsers(string adminId)
         {
             var users = from u in _dbContext.Users
                         join ur in _dbContext.UserRoles on u.Id equals ur.UserId
                         join r in _dbContext.Roles on ur.RoleId equals r.Id
+                        where u.Id != adminId
                         select new AllUserDTO
                         {
                             Id = u.Id,

@@ -13,27 +13,27 @@
         if (await UserManager.IsInRoleAsync(appUser, "Admin"))
         {
             <li class="nav-item">
-                @Html.ActionLink("All Users", "GetUsers", "User", new { @class = "nav-link text-dark" })
+                @Html.ActionLink("All Users", "GetUsers", "User", "", new { @class = "nav-link text-dark" })
             </li>
 
             <li class="nav-item">
-                @Html.ActionLink("Create User", "CreateUser", "User", new { @class = "nav-link text-dark" })
+                @Html.ActionLink("Create User", "CreateUser", "User","", new { @class = "nav-link text-dark" })
             </li>
         }
         else if (await UserManager.IsInRoleAsync(appUser, "Agent"))
         {
             <li class="nav-item">
-                @Html.ActionLink("Rentals", "AgentRentals", "Rentals", new { @class = "nav-link text-dark" })
+                @Html.ActionLink("Rentals", "AgentRentals", "Rentals", "", new { @class = "nav-link text-dark" })
             </li>
         }
         else
         {
             <li class="nav-item">
-                @Html.ActionLink("My Rentals", "UserRentals", "Rentals", new { @class = "nav-link text-dark" })
+                @Html.ActionLink("My Rentals", "UserRentals", "Rentals", "", new { @class = "nav-link text-dark" })
             </li>
 
             <li class="nav-item">
-                @Html.ActionLink("New Rentals", "Index", "Rentals", new { @class = "nav-link text-dark" })
+                @Html.ActionLink("New Rentals", "Index", "Rentals","", new { @class = "nav-link text-dark" })
             </li>
         }
 

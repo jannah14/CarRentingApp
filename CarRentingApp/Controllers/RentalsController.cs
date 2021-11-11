@@ -57,7 +57,11 @@ namespace CarRentingApp.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateRental(CreateRentalDTO newRental)
         {
-           
+
+            if (newRental.VehicleId <= 0 || newRental.TotalPrice <= 0)
+            {
+                return BadRequest();
+            }
             newRental.AppUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);  //find the id of the loggeduser
 
             var result = await _rentalRepository.ApplyForRent(newRental);
@@ -96,6 +100,8 @@ namespace CarRentingApp.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete(IntIdentifier rentalId)
         {
+            if (rentalId.Id <= 0)
+                return BadRequest();
             var loggedUser = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var result = await _rentalRepository.DeleteRental(rentalId.Id, loggedUser);
 
@@ -122,6 +128,8 @@ namespace CarRentingApp.Controllers
         [HttpPut]
         public async Task<IActionResult> ApproveRental(IntIdentifier rentalId)
         {
+            if (rentalId.Id <= 0)
+                return BadRequest();
             var loggedUser = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             var result = await _rentalRepository.Approve(rentalId.Id, loggedUser);
@@ -138,6 +146,8 @@ namespace CarRentingApp.Controllers
         [HttpPut]
         public async Task<IActionResult> RejectRental(RejectRental rejectRental)
         {
+            if (rejectRental.RentalId <= 0)
+                return BadRequest();
             var loggedUser = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             var result = await _rentalRepository.Reject(rejectRental.RentalId, loggedUser, rejectRental.RejectionReason);
@@ -165,6 +175,8 @@ namespace CarRentingApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(EditRentalDTO Rental)
         {
+            if (Rental.Id <= 0 || Rental.VehicleId <= 0)
+                return BadRequest();
             var result = await _rentalRepository.Edit(Rental);
 
             if (result)
