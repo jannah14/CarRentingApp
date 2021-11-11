@@ -91,7 +91,6 @@ namespace CarRentingApp.Repositories
                             Lastname = u.LastName,
                             Birthday = u.Birthday,
                             PhoneNumber = u.PhoneNumber,
-                            Username = u.UserName,
                             Role = r.Name
                         };
 
