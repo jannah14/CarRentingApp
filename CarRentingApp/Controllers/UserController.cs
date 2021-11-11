@@ -52,9 +52,9 @@ namespace CarRentingApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> UpdateUser(Identifier identifier)
+        public async Task<IActionResult> UpdateUser(string UserId)
         {
-            var user = await _userRepo.GetUserById(identifier.UserId);
+            var user = await _userRepo.GetUserById(UserId);
 
             if(user != null)
             {
@@ -101,8 +101,8 @@ namespace CarRentingApp.Controllers
 
 
         //validations
-        [AcceptVerbs("GET", "POST", "PUT")]
-        public async Task<IActionResult> VerifyBirthday(InputModel user)
+        [AcceptVerbs("GET", "POST")]
+        public  IActionResult VerifyBirthday(InputModel user)
         {
             if ((DateTime.Now.Year - user.Birthday.Year) >= 18)
             {
@@ -113,7 +113,7 @@ namespace CarRentingApp.Controllers
         }
 
         [AcceptVerbs("GET", "POST", "PUT")]
-        public async Task<IActionResult> VerifyBirthday(UpdateUserDTO user)
+        public  IActionResult VerifyBirthday(UpdateUserDTO user)
         {
             if ((DateTime.Now.Year - user.Birthday.Year) >= 18)
             {

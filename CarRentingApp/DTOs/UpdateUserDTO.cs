@@ -17,7 +17,7 @@ namespace CarRentingApp.DTOs
         public string Lastname { get; set; }
         
         [DataType(DataType.Date)]
-        [Remote(action: "VerifyBithday", controller: "User")]
+        //[Remote(action: "VerifyBithday", controller: "User")]
         public DateTime Birthday { get; set; }
         
         [Display(Name = "Phone Number")]

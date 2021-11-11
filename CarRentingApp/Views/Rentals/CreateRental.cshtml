@@ -77,7 +77,7 @@
 
                 if (selEndDate === null || selStartDate === null) {
                     alert("Both date fields must be filled!");
-                } else if (selEndDate <= selStartDate || selStartDate < todayDate) {
+                } else if (selEndDate <= selStartDate || selEndDate <= todayDate) {
                     alert("Please select correct start and end dates!")
                 }
                 else {

@@ -1,7 +1,6 @@
 using CarRentingApp.Data;
 using CarRentingApp.Repositories;
 using CarRentingApp.Services;
-using CarRentingApp.Validation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -31,12 +30,15 @@ namespace CarRentingApp
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllersWithViews(options =>
-            {
-                options.Filters.Add(typeof(ValidatorActionFilter));
-            }).AddFluentValidation(fvc =>
-                fvc.RegisterValidatorsFromAssemblyContaining<Startup>()
-            );
+            
+            services.AddControllersWithViews();
+            
+            //services.AddControllersWithViews(options =>
+            //{
+            //    options.Filters.Add(typeof(ValidatorActionFilter));
+            //}).AddFluentValidation(fvc =>
+            //    fvc.RegisterValidatorsFromAssemblyContaining<Startup>()
+            //);
 
             services.AddTransient<IEmailSender, EmailSender>();
             services.Configure<AuthMessageSenderOptions>(Configuration);

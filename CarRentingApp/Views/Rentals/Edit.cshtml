@@ -31,6 +31,7 @@ else
             @Html.ValidationMessageFor(m => m.Rental.VehicleId)
         </div>
         @Html.HiddenFor(m => m.Rental.Id)
+
         @Html.AntiForgeryToken()
 
         <button class="btn btn-primary" type="submit" id="save" data-rental-id="@Model.Rental.Id"> Edit </button>
