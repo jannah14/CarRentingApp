@@ -94,7 +94,7 @@ namespace Testing.RepositoryTests
         }
 
         [Fact]
-        public async void GetUserRentals_ShouldReturn_Null_ForNonExistingUser()
+        public async void GetUserRentals_ShouldReturn_Empty_ForNonExistingUser()
         {
             //Arrange
             byte? filterByStatus = null;
@@ -104,13 +104,13 @@ namespace Testing.RepositoryTests
             var result = await _sut.GetUserRentals(userId, filterByStatus);
 
             //Assert
-            Assert.Null(result);
+            Assert.Empty(result);
         }
 
         [Theory]
         [InlineData("6290ffd6-a9b2-40a3-b527-24c3097847d9", 1)]
         [InlineData("6290ffd6-a9b2-40a3-b527-24c3097847d9", 0)]
-        public async void GetUserRentals_ShouldReturn_Rentals_WithSpecificStatus(string userId, byte? status)
+        public async void GetUserRentals_ShouldReturn_Rentals_WithSpecificStatus(string userId, byte status)
         {
             //Arrange
 
@@ -120,7 +120,7 @@ namespace Testing.RepositoryTests
             //Assert
             Assert.NotNull(result);
 
-            Assert.Collection(result, item => Assert.Equal(status, item.Status));
+            Assert.All(result, item => Assert.Equal(status, item.Status));
         }
 
 
