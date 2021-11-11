@@ -63,7 +63,6 @@ namespace CarRentingApp.Areas.Identity.Pages.Account
             [DataType(DataType.Date)]
             [Min18YearsOld]
             [Display(Name = "Birthday")]
-            
             public DateTime Birthday { get; set; }
 
             [Required]

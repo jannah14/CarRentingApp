@@ -52,8 +52,6 @@ namespace CarRentingApp.Repositories
 
             var affecteddRows = _dbContext.Database.ExecuteSqlCommand($"Update Rentals Set Status = {RentalStatus.Approved} where Id = {rentalId}");
 
-            //await _dbContext.SaveChangesAsync();
-
             return affecteddRows > 0 ? true : false;
         }
 
@@ -62,8 +60,6 @@ namespace CarRentingApp.Repositories
             try
             {
                 var deletedRows = _dbContext.Database.ExecuteSqlCommand($"Delete from Rentals where Id = {rentalId} and AppUserId = {loggedUser}");
-
-                await _dbContext.SaveChangesAsync();
 
                 return true;
             }
@@ -78,10 +74,9 @@ namespace CarRentingApp.Repositories
 
         public async Task<bool> Edit(EditRentalDTO rentalDTO)
         {
-            //var rentedCount = await IsAvailable(rentalDTO.StartDate, rentalDTO.EndDate, rentalDTO.VehicleId);
             var updatedRows = _dbContext.Database.ExecuteSqlCommand($"Update Rentals Set StartDate = {rentalDTO.StartDate}, EndDate = {rentalDTO.EndDate}, VehicleId = {rentalDTO.VehicleId} where Id = {rentalDTO.Id}");
 
-            return updatedRows > 0 ? true : false;
+            return updatedRows > 0;
         }
 
         public async Task<IEnumerable<AgentRentalsDTO>> GetAgentRentals(string userId)
@@ -147,7 +142,7 @@ namespace CarRentingApp.Repositories
         {
             var affecteddRows = _dbContext.Database.ExecuteSqlCommand($"Update Rentals Set Status = {RentalStatus.Rejected}, RejectionReason= {rejectionReason} where Id = {rentalId}");
 
-            return affecteddRows > 0 ? true : false;
+            return affecteddRows > 0;
         }
 
         public async Task<bool> IsAvailable(DateTime startDate, DateTime endDate, int vehicleId)
@@ -160,7 +155,7 @@ namespace CarRentingApp.Repositories
                       select groupedRentals.Count()).FirstOrDefaultAsync();
             var available = await _dbContext.Vehicles.FirstOrDefaultAsync(v => v.Id == vehicleId && v.ItemsInStock > sql);
 
-            return available != null? true: false; 
+            return available != null; 
         }
     }
 }

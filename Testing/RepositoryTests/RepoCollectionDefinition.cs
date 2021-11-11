@@ -47,9 +47,6 @@ namespace Testing.RepositoryTests
 
             return context;
         }
-
-        
-
         public void Dispose() => Connection.Dispose();
     }
 

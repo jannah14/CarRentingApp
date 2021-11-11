@@ -151,10 +151,6 @@ namespace Testing.ControllerTests.User
 
                 //Assert
                 Assert.IsType<RedirectToActionResult>(result);
-
-                
-
-
             }
 
         }
