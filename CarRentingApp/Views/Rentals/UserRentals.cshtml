@@ -1,0 +1,211 @@
+﻿@model IEnumerable<CarRentingApp.DTOs.UserRentalsDTO>
+
+@{
+    ViewData["Title"] = "All User Rentals";
+}
+
+<div class="d-flex justify-content-center">
+    <div class="form-check col-sm-2">
+        <input class="form-check-input" type="radio" name="radioButton" id="approved" value="@((byte)RentalStatus.Approved)">
+        <label class="form-check-label" for="approved">
+            Approved
+        </label>
+    </div>
+    <div class="form-check col-sm-2">
+        <input class="form-check-input" type="radio" name="radioButton" id="rejected" value="@((byte)RentalStatus.Rejected)">
+        <label class="form-check-label" for="rejected">
+            Rejected
+        </label>
+    </div>
+    <div class="form-check col-sm-2">
+        <input class="form-check-input" type="radio" name="radioButton" id="pending" value="@((byte)RentalStatus.Pending)">
+        <label class="form-check-label" for="pending">
+            Pending
+        </label>
+    </div>
+</div>
+<br />
+<br />
+<table id="rentals" class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th> Vehicle</th>
+            <th> Start Date</th>
+            <th> End Date</th>
+            <th> Total Price </th>
+            <th> Status </th>
+            <th> Agent </th>
+            <th> Days Left </th>
+            <th> Delete </th>
+            <th> Edit </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var rental in Model)
+        {
+            <tr>
+                <td> @rental.VehicleModel</td>
+                <td> @rental.StartDate </td>
+                <td> @rental.EndDate </td>
+                <td> $ @rental.TotalPrice </td>
+                <td>
+                    @switch (rental.Status)
+                    {
+                        case (byte)RentalStatus.Approved:
+                            <label class="btn btn-success"> Approved </label>;
+                            break;
+                        case (byte)RentalStatus.Pending:
+                            <label class="btn btn-secondary"> Pending </label>;
+                            break;
+                        case (byte)RentalStatus.Rejected:
+                            <label class="btn btn-danger"> Rejected </label>;
+                            break;
+                    }
+                </td>
+                <td> @rental.Agent </td>
+                <td> 
+                    @if (rental.Status == (byte)RentalStatus.Approved && rental.EndDate > DateTime.UtcNow && rental.StartDate <= DateTime.UtcNow)
+                    {
+                        <label> @rental.DaysLeft  </label>
+                     }
+                    else
+                    {
+                        <label> </label>
+                    }
+                </td>
+                <td> <button data-rental-id="@rental.Id" class="js-edit btn-info"> Edit </button></td>
+                <td>
+                    <button data-rental-id="@rental.Id" class="js-delete btn-danger"> Delete </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@section scripts{
+
+    <script>
+        $(document).ready(function () {
+
+            $("#rentals").on("click", ".js-delete", function () {
+                console.log("u klikuuuu");
+                var button = $(this);
+
+                var rentalId = $(button).attr("data-rental-id");
+
+                if (confirm("Are you sure you want to delete this rental?")) {
+                    $.ajax({
+                        url: "/rentals/delete" ,
+                        method: "Delete",
+                        data: {
+                            Id: rentalId
+                        },
+                        success: function () {
+                            button.parents("tr").remove();
+                        }
+                    });
+                }
+            });
+
+            $("#rentals").on("click", ".js-edit", function () {
+                console.log("u klikuuuu");
+                var button = $(this);
+
+                var rentalId = $(button).attr("data-rental-id");
+
+                location.href = "/rentals/edit?rentalId=" + rentalId;
+                
+                   
+                
+            });
+
+
+            $('input[type=radio][name=radioButton]').change(function () {
+
+                var filter = $('input[name="radioButton"]:checked').val();
+                console.log("vlera:", filter)
+
+                $.ajax({
+                    url: "/rentals/UserRentalsFiltered?filterByStatus=" + filter,
+                        method: "get",
+                        dataType: 'json',
+                        success: function ( response) {
+                            var trHTML = `<thead>
+                                            <tr>
+                                                <th> Vehicle</th>
+                                                <th> Start Date</th>
+                                                <th> End Date</th>
+                                                <th> Total Price </th>
+                                                <th> Status </th>
+                                                <th> Agent </th>
+                                                <th> Days Left </th>
+                                                <th> Delete </th>
+                                                <th> Edit </th>
+                                            </tr>
+                                        </thead> <tbody>`;
+
+                            let today = new Date(Date.now());
+                            let todayDate = today.toJSON();
+
+                            for (var i = 0; i < response.length; i++) {
+                                var o = response[i];
+                                var daysLeft = null;
+                                var status = "";
+                                switch (o.status) {
+                                    case 0:
+                                        status = "Pending";
+                                        break;
+                                    case 1:
+                                        status = "Approved";;
+
+                                        var start = new Date(Date.parse(o.startDate));
+                                        var end = new Date(Date.parse(o.endDate));
+
+                                        console.log("vdfvr", today, start, end);
+
+                                        if (end > today && start <= today) {
+                                            console.log("dataaaaaaaaa")
+
+                                            daysLeft = o.daysLeft;
+                                        }
+                                        
+                                        break;
+                                    case 2:
+                                        status = "Rejected";
+                                        break;
+                                }
+                                
+                                trHTML += '<tr><td>' + o.vehicleModel +
+                                    '</td><td>' + o.startDate +
+                                    '</td><td>' + o.endDate +
+                                    '</td><td>' + o.totalPrice + '</td>' +
+                                    '<td>' + status + '</td>' +
+                                    '<td>' + o.agent + '</td>' +
+                                    '<td>' + (daysLeft ? daysLeft : '') + '</td>' +
+                                    '<td><button data-rental-id="' + o.id + '"class="btn btn-info js-edit" > Edit </button></td>' +
+                                    '<td><button data-rental-id="' + o.id +'" class="btn btn-danger js-delete" > Delete </button></td></tr >';;
+                                
+                            }
+
+                            trHTML += '</tbody>'
+                            console.log(trHTML);
+
+                            //remove all the child nodes of the table
+                            if ($('#rentals').children)
+                                $('#rentals').empty();
+
+
+                            //populate the table with new child elements- new data
+                            $('#rentals').append(trHTML);
+
+                        },
+                        error: function (e) {
+                            $("#txtHint").html(e.responseText);
+                        }
+                });
+            });
+        });
+    </script>
+
+}

@@ -1,12 +1,15 @@
 ﻿using CarRentingApp.DTOs;
 using CarRentingApp.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 using static CarRentingApp.Areas.Identity.Pages.Account.RegisterModel;
 
 namespace CarRentingApp.Controllers
 {
+    [Authorize(Roles ="Admin")]  
     public class UserController : Controller
     {
         private readonly IUserRepository _userRepo;
@@ -18,6 +21,7 @@ namespace CarRentingApp.Controllers
             _roleRepo = roleRepo;
         }
 
+        
         //return all the users registered in the application
         [HttpGet]
         public async Task<IActionResult> GetUsers()
@@ -34,23 +38,23 @@ namespace CarRentingApp.Controllers
 
         //delete a user
         [HttpDelete]
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(Identifier identifier)
         {
-            var result = await _userRepo.DeleteUser(id);
+            var result = await _userRepo.DeleteUser(identifier.UserId);
 
             if (result)
             {
                 return Ok();
             }
 
-            return BadRequest();
+            return NotFound();
             
         }
 
         [HttpGet]
-        public async Task<IActionResult> UpdateUser(string userId)
+        public async Task<IActionResult> UpdateUser(Identifier identifier)
         {
-            var user = await _userRepo.GetUserById(userId);
+            var user = await _userRepo.GetUserById(identifier.UserId);
 
             if(user != null)
             {
@@ -95,5 +99,34 @@ namespace CarRentingApp.Controllers
             return StatusCode(StatusCodes.Status304NotModified);
         }
 
+
+        //validations
+        [AcceptVerbs("GET", "POST", "PUT")]
+        public async Task<IActionResult> VerifyBirthday(InputModel user)
+        {
+            if ((DateTime.Now.Year - user.Birthday.Year) >= 18)
+            {
+                return Json(true);
+            }
+
+            return Json("You should be at least 18 years old to register!");
+        }
+
+        [AcceptVerbs("GET", "POST", "PUT")]
+        public async Task<IActionResult> VerifyBirthday(UpdateUserDTO user)
+        {
+            if ((DateTime.Now.Year - user.Birthday.Year) >= 18)
+            {
+                return Json(true);
+            }
+
+            return Json("You should be at least 18 years old to register!");
+        }
+
+    }
+
+    public class Identifier
+    {
+        public string UserId { get; set; }
     }
 }

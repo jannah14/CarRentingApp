@@ -1,6 +1,8 @@
 using CarRentingApp.Data;
 using CarRentingApp.Repositories;
 using CarRentingApp.Services;
+using CarRentingApp.Validation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -28,7 +30,13 @@ namespace CarRentingApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+
+            services.AddControllersWithViews(options =>
+            {
+                options.Filters.Add(typeof(ValidatorActionFilter));
+            }).AddFluentValidation(fvc =>
+                fvc.RegisterValidatorsFromAssemblyContaining<Startup>()
+            );
 
             services.AddTransient<IEmailSender, EmailSender>();
             services.Configure<AuthMessageSenderOptions>(Configuration);

@@ -1,0 +1,150 @@
+﻿@model CarRentingApp.ViewModels.CreateRentalViewModel
+@{
+    ViewData["Title"] = "CreateRental";
+}
+
+<h1>Apply for a new Rental</h1>
+
+
+<hr />
+<form class="row">
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="form-group col">
+        <label> Start Date </label>
+        <input id="startdate" class="form-control" type="date" />
+        <span asp-validation-for="@Model.Rental.StartDate" class="text-danger"></span>
+    </div>
+    <div class="form-group col">
+        <label> End Date </label>
+        <input id="enddate" class="form-control" type="date" />
+        <span asp-validation-for="@Model.Rental.EndDate" class="text-danger"></span>
+    </div>
+    <div class="form-group col">
+        <br>
+        <input id="searchstr" style="margin-top:8px" type="text" class="form-control" placeholder="Vehicle's brand and model">
+    </div>
+    <div class="form-group col">
+        <br>
+        <button class="btn btn-outline-secondary btnSubmit" style="margin-top:8px" type="submit" id="btnSubmit"
+                data-vehicle-type="@Model.Type">
+            Search
+        </button>
+    </div>
+</form>
+
+<div id="tabela">
+
+</div>
+
+
+
+
+
+@section Scripts {
+
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            $("#btnSubmit").click(function (e) {
+                e.preventDefault();
+
+                var button = $("#btnSubmit");
+                console.log("u klikuuu");
+
+                var selText = $('#searchstr').val();
+                console.log(selText);
+
+                let start = new Date($('#startdate').val());
+                var selStartDate = start.toJSON();
+                console.log(selStartDate);
+
+                let end = new Date($('#enddate').val());
+                var selEndDate = end.toJSON();
+                console.log(selEndDate);
+
+                let today = new Date(Date.now());
+                let todayDate = today.toJSON();
+
+                // To calculate the time difference of two dates
+                var Difference_In_Time = end.getTime() - start.getTime();
+
+                // To calculate the no. of days between two dates
+                var diffDays = Difference_In_Time / (1000 * 3600 * 24);
+                console.log(diffDays);
+                var seltype = button.attr("data-vehicle-type");
+                console.log(seltype);
+
+                if (selEndDate === null || selStartDate === null) {
+                    alert("Both date fields must be filled!");
+                } else if (selEndDate <= selStartDate || selStartDate < todayDate) {
+                    alert("Please select correct start and end dates!")
+                }
+                else {
+                    $.ajax({
+                        url: "/rentals/getvehicles?vehicleType=" + seltype + "&&startDate=" + selStartDate + "&&endDate=" + selEndDate + "&searchStr=" + selText,
+                        method: "Get",
+                        dataType: 'json',
+                        success: function (response) {
+
+                            var trHTML = "<table class='table table-striped table-bordered table-hover' id='records_table'>" +
+                                "<tr><th> Brand and Model</th><th>Price Per Day</th><th>Rent</th></tr>";
+                            console.log(trHTML);
+                            for (var i = 0; i < response.length; i++) {
+                                var o = response[i];
+                                console.log(o);
+                                trHTML += '<tr><td>' + o.brandModel +
+                                    '</td><td> $' + o.pricePerDay +
+                                    '</td><td><button data-vehicle-id="' + o.id + '"data-vehicle-totalPrice="' + ((diffDays + 1) * parseInt(o.pricePerDay)) + '" class="btn btn-danger js-apply" > Apply </button></td></tr>';
+                            }
+                            console.log(trHTML);
+
+                            trHTML += "</table>";
+                            //remove all the child nodes of the table
+                            if ($('#tabela').children)
+                                $('#tabela').empty();
+
+
+                            //populate the table with new child elements- new data
+                            $('#tabela').append(trHTML);
+
+                            $(".js-apply").click(function () {
+                                var button = $(this);
+                                console.log(button, "Butoniiii ");
+                                if (confirm("Total cost for this vehicle is" + button.attr("data-vehicle-totalPrice") + ". Do you want to proceed?")) {
+                                    $.ajax({
+                                        url: "/rentals/createrental",
+                                        method: "post",
+                                        data: {
+                                            StartDate: selStartDate,
+                                            EndDate: selEndDate,
+                                            VehicleId: button.attr("data-vehicle-id"),
+                                            TotalPrice: button.attr("data-vehicle-totalPrice")
+                                        },
+                                        success: function () {
+                                            if (confirm("Your application has been sent.")) {
+                                                location.href = "/rentals/userRentals";
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+                        },
+                        error: function (e) {
+                            $("#txtHint").html(e.responseText);
+                        }
+
+                    });
+                }
+
+
+            });
+        });
+
+
+    </script>
+
+
+
+
+}

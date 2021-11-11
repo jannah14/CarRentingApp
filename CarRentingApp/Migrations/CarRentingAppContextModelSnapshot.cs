@@ -45,10 +45,12 @@ namespace CarRentingApp.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
 
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
 
@@ -70,6 +72,7 @@ namespace CarRentingApp.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("PhoneNumberConfirmed")
@@ -144,19 +147,15 @@ namespace CarRentingApp.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("AgentId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Color")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ItemsAvailable")
-                        .HasColumnType("int");
 
                     b.Property<int>("ItemsInStock")
                         .HasColumnType("int");
-
-                    b.Property<string>("Photo")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("PricePerDay")
                         .HasColumnType("float");
@@ -181,9 +180,11 @@ namespace CarRentingApp.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Brand")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Model")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<byte>("Type")
@@ -346,7 +347,9 @@ namespace CarRentingApp.Migrations
                 {
                     b.HasOne("CarRentingApp.Areas.Identity.Data.AppUser", "Agent")
                         .WithMany()
-                        .HasForeignKey("AgentId");
+                        .HasForeignKey("AgentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("CarRentingApp.Models.VehicleModel", "VehicleModel")
                         .WithMany()

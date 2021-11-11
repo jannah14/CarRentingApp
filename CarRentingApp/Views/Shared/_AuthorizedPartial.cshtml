@@ -1,0 +1,51 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using CarRentingApp.Areas.Identity.Data
+@using System.Security.Claims;
+
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+
+<ul class="navbar-nav">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        var appUser = await UserManager.FindByIdAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+        if (await UserManager.IsInRoleAsync(appUser, "Admin"))
+        {
+            <li class="nav-item">
+                @Html.ActionLink("All Users", "GetUsers", "User", new { @class = "nav-link text-dark" })
+            </li>
+
+            <li class="nav-item">
+                @Html.ActionLink("Create User", "CreateUser", "User", new { @class = "nav-link text-dark" })
+            </li>
+        }
+        else if (await UserManager.IsInRoleAsync(appUser, "Agent"))
+        {
+            <li class="nav-item">
+                @Html.ActionLink("Rentals", "AgentRentals", "Rentals", new { @class = "nav-link text-dark" })
+            </li>
+        }
+        else
+        {
+            <li class="nav-item">
+                @Html.ActionLink("My Rentals", "UserRentals", "Rentals", new { @class = "nav-link text-dark" })
+            </li>
+
+            <li class="nav-item">
+                @Html.ActionLink("New Rentals", "Index", "Rentals", new { @class = "nav-link text-dark" })
+            </li>
+        }
+
+
+
+
+
+    }
+
+
+
+
+
+</ul>
+

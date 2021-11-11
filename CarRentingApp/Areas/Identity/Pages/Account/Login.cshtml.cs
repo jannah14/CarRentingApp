@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using System.Security.Claims;
 
 namespace CarRentingApp.Areas.Identity.Pages.Account
 {
@@ -45,7 +46,7 @@ namespace CarRentingApp.Areas.Identity.Pages.Account
         {
             [Required]
             [DataType(DataType.Text)]
-            public string Username { get; set; }
+            public string Email { get; set; }
 
             [Required]
             [DataType(DataType.Password)]
@@ -80,10 +81,27 @@ namespace CarRentingApp.Areas.Identity.Pages.Account
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(Input.Username, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+
+                    //redirect the user based on the role
+                    //var appUser = await _userManager.FindByIdAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                    //if (await _userManager.IsInRoleAsync(appUser, "Admin"))
+                    //{
+                    //    return LocalRedirect("~/user/getusers");
+                    //}
+                    //else if (await _userManager.IsInRoleAsync(appUser, "Agent"))
+                    //{
+                    //    return LocalRedirect("~/rentals/agentrentals");
+                    //}
+                    //else
+                    //{
+                    //    return LocalRedirect("~/rentals/index");
+                    //}
+                    
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)

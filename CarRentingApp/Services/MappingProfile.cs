@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CarRentingApp.Areas.Identity.Data;
 using CarRentingApp.DTOs;
+using CarRentingApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,8 @@ namespace CarRentingApp.Services
             CreateMap<UpdateUserDTO, AppUser>();
 
             CreateMap<InputModel, AppUser>();
+            
+            CreateMap<CreateRentalDTO, Rentals>();
         }
     }
 }

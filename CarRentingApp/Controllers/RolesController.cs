@@ -1,6 +1,7 @@
 ﻿using CarRentingApp.Models;
 using CarRentingApp.Repositories;
 using CarRentingApp.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace CarRentingApp.Controllers
 {
+    [Authorize(Roles ="Admin")]
     public class RolesController : Controller
     {
         
@@ -58,7 +60,6 @@ namespace CarRentingApp.Controllers
             return StatusCode(StatusCodes.Status304NotModified);
             
         }
-
 
     }
 }

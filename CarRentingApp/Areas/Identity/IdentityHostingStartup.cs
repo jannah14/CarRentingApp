@@ -20,7 +20,7 @@ namespace CarRentingApp.Areas.Identity
                     options.UseSqlServer(
                         context.Configuration.GetConnectionString("CarRentingAppContextConnection")));
 
-                services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = false)
+                services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
                     .AddRoles<IdentityRole>()
                     .AddEntityFrameworkStores<CarRentingAppContext>();
             });

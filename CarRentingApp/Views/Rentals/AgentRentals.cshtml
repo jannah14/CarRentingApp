@@ -1,0 +1,92 @@
+﻿@model IEnumerable<CarRentingApp.DTOs.AgentRentalsDTO>
+@{
+    ViewData["Title"] = "AgentRentals";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Rentals waiting for your approval</h1>
+
+<table id="rentals" class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th> Vehicle</th>
+            <th> Start Date</th>
+            <th> End Date</th>
+            <th> User </th>
+            <th> Approve </th>
+            <th> Reject </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var rental in Model)
+        {
+            <tr>
+                <td> @rental.Vehicle</td>
+                <td> @rental.StartDate </td>
+                <td> @rental.EndDate </td>
+                <td> @rental.User </td>
+                <td>
+                    <button data-rental-id="@rental.Id" class="js-approve btn-success"> Approve </button>
+                </td>
+                <td>
+                    <button data-rental-id="@rental.Id" class="js-reject btn-danger"> Reject </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section scripts{
+
+    <script>
+        $(document).ready(function () {
+
+            $("#rentals").on("click", ".js-approve", function () {
+                console.log("u klikuuuu");
+                var button = $(this);
+
+                var rentalId = $(button).attr("data-rental-id");
+
+                if (confirm("Are you sure you want to approve this rental?")) {
+                    $.ajax({
+                        url: "/rentals/approveRental",
+                        method: "put",
+                        data: {
+                            Id: rentalId
+                        },
+                        success: function () {
+                            button.parents("tr").remove();
+                        }
+                    });
+                }
+            });
+
+            $("#rentals").on("click", ".js-reject", function () {
+                console.log("u klikuuuu");
+                var button = $(this);
+
+                var rentalId = $(button).attr("data-rental-id");
+
+                var rejectionReason = prompt("Why are you rejecting this rent application?")
+
+                if (rejectionReason) {
+                    $.ajax({
+                        url: "/rentals/rejectRental",
+                        method: "put",
+                        data: {
+                            RentalId: rentalId,
+                            RejectionReason: rejectionReason
+                        },
+                        success: function () {
+                            button.parents("tr").remove();
+                        }
+                    });
+                }
+               
+                
+            });
+        });
+    </script>
+
+}
+

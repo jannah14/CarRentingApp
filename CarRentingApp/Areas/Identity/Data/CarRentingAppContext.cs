@@ -26,11 +26,11 @@ namespace CarRentingApp.Data
         }
 
 
-        DbSet<VehicleModel> VehicleModels { get; set; }
+        public DbSet<VehicleModel> VehicleModels { get; set; }
 
-        DbSet<Vehicle> Vehicles { get; set; }
+        public DbSet<Vehicle> Vehicles { get; set; }
 
-        DbSet<Rentals> Rentals { get; set; }
+        public DbSet<Rentals> Rentals { get; set; }
         
     }
 }

@@ -1,0 +1,88 @@
+﻿@model CarRentingApp.ViewModels.EditRentalViewModel;
+@{
+    ViewData["Title"] = "Edit";
+}
+
+
+@if (Model.Rental.Status == (byte)RentalStatus.Rejected)
+{
+    <h2 style="color:red"> This rental is rejected because: <br /> @Model.Rental.RejectionReason </h2>
+}
+else if (Model.Rental.Status == (byte)RentalStatus.Approved)
+{
+    <h2 style="color:red"> You can not edit an application approved by out agents </h2>
+}
+else
+{
+    <form asp-action="Edit" method="post">
+        <div class="form-group">
+            <label asp-for="@Model.Rental.StartDate"></label>
+            <input asp-for="@Model.Rental.StartDate" class="form-control" id="startdate" />
+            <span asp-validation-for="@Model.Rental.StartDate" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.Rental.EndDate"></label>
+            <input asp-for="@Model.Rental.EndDate" class="form-control" id="enddate" />
+            <span asp-validation-for="@Model.Rental.EndDate" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Rental.VehicleId)
+            @Html.DropDownListFor(m => m.Rental.VehicleId, new SelectList(Model.Vehicles, "Id", "BrandModel"), "Select a vehicle", new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Rental.VehicleId)
+        </div>
+        @Html.HiddenFor(m => m.Rental.Id)
+        @Html.AntiForgeryToken()
+
+        <button class="btn btn-primary" type="submit" id="save" data-rental-id="@Model.Rental.Id"> Edit </button>
+    </form>
+
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    @*<script>
+            $(document).ready(function () {
+                $('#save').click(function () {
+                    let start = new Date($('#startdate').val());
+                    var selStartDate = start.toJSON();
+
+                    let end = new Date($('#enddate').val());
+                    var selEndDate = end.toJSON();
+
+                    let today = new Date(Date.now());
+                    let todayDate = today.toJSON();
+
+                    let vehicle = $('#vehicle').val();
+                    console.log(vehicle, "makina")
+
+                    if (selEndDate === null || selStartDate === null) {
+                        alert("Both date fields must be filled!");
+                    } else if (selEndDate <= selStartDate || selStartDate < todayDate) {
+                        alert("Please select correct start and end dates!")
+                    }
+                    else {
+                        $.ajax({
+
+                            url: "/rentals/edit",
+                            method: "put",
+                            data: {
+                                Id: $(this).attr("data-rental-id"),
+                                StartDate: selStartDate,
+                                EndDate: selEndDate,
+                                VehicleId: parseInt(vehicle)
+                            },
+                            success: function () {
+                                location.href="rentals/userrentals"
+                            },
+                            error: function () {
+                                alert("This vehicle is not available for the selected dates.")
+                            }
+                        })
+                    }
+                })
+            });
+        </script>*@
+}
+
+

@@ -11,15 +11,18 @@ namespace CarRentingApp.Areas.Identity.Data
     public class AppUser : IdentityUser
     {
         [StringLength(255)]
+        [Required]
         public string FirstName { get; set; }
 
         [StringLength(255)]
+        [Required]
         public string LastName { get; set; }
 
         public DateTime Birthday { get; set; }
 
         public string DrivingLicense { get; set; }
 
+        [Required]
         public string PhoneNumber { get; set; }
 
     }

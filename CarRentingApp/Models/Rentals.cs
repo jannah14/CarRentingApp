@@ -17,6 +17,7 @@ namespace CarRentingApp.Models
         
         [StringLength(255)]
         public string RejectionReason { get; set; }
+
         public string AppUserId { get; set; }  //foreign key with AppUser
         public int VehicleId { get; set; } //foreign key with Vehicle
 

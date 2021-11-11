@@ -38,6 +38,9 @@ namespace CarRentingApp.Repositories
                 var newAppUser = new AppUser();
                 var appUser = _mapper.Map<InputModel, AppUser>(user, newAppUser);
 
+                //set email verified by default
+                appUser.EmailConfirmed = true;
+
                 //create new user with password
                 await _userManager.CreateAsync(appUser, user.Password);
 

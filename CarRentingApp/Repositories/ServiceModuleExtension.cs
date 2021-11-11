@@ -13,6 +13,8 @@ namespace CarRentingApp.Repositories
         {
             serviceCollection.AddTransient<IUserRepository, UserRepository>();
             serviceCollection.AddTransient<IRoleRepository, RoleRepository>();
+            serviceCollection.AddTransient<IVehicleRepository, VehicleRepository>();
+            serviceCollection.AddTransient<IRentalRepository, RentalRepository>();
         }
     }
 }
