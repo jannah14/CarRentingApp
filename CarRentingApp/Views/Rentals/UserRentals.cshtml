@@ -179,11 +179,13 @@
                                         bckgColor="red"
                                         break;
                                 }
+
+                                
                                 
                                 trHTML += '<tr><td>' + o.vehicleModel +
                                     '</td><td>' + o.startDate +
                                     '</td><td>' + o.endDate +
-                                    '</td><td>' + o.totalPrice + '</td>' +
+                                    '</td><td> $' + o.totalPrice + '</td>' +
                                     '<td><label style="background-color:' + bckgColor+';color:white">' + status + '</label></td>' +
                                     '<td>' + o.agent + '</td>' +
                                     '<td>' + (daysLeft ? daysLeft : '') + '</td>' +

@@ -30,6 +30,7 @@ namespace CarRentingApp.Repositories
 
             var rentalInDb = _mapper.Map<CreateRentalDTO, Rentals>(rentalDTO, newRental);
 
+            //the status by default is Pending
             rentalInDb.Status = (byte)RentalStatus.Pending;
 
             _dbContext.Rentals.Add(rentalInDb);
@@ -54,7 +55,7 @@ namespace CarRentingApp.Repositories
         {
             try
             {
-                var affecteddRows = _dbContext.Database.ExecuteSqlInterpolated($"Update Rentals Set Status = {RentalStatus.Approved} where Id = {rentalId}");
+                var affecteddRows = await _dbContext.Database.ExecuteSqlInterpolatedAsync($"Update Rentals Set Status = {RentalStatus.Approved} where Id = {rentalId}");
                 return affecteddRows > 0 ? true : false;
             }
             catch(Exception e)
@@ -69,7 +70,7 @@ namespace CarRentingApp.Repositories
         {
             try
             {
-                var deletedRows = _dbContext.Database.ExecuteSqlInterpolated($"Delete from Rentals where Id = {rentalId} and AppUserId = {loggedUser}");
+                var deletedRows = await _dbContext.Database.ExecuteSqlInterpolatedAsync($"Delete from Rentals where Id = {rentalId} and AppUserId = {loggedUser}");
 
                 return true;
             }
@@ -86,7 +87,7 @@ namespace CarRentingApp.Repositories
         {
             try
             {
-                var updatedRows = _dbContext.Database.ExecuteSqlInterpolated($"Update Rentals Set StartDate = {rentalDTO.StartDate}, EndDate = {rentalDTO.EndDate}, VehicleId = {rentalDTO.VehicleId} where Id = {rentalDTO.Id}");
+                var updatedRows = await _dbContext.Database.ExecuteSqlInterpolatedAsync($"Update Rentals Set StartDate = {rentalDTO.StartDate}, EndDate = {rentalDTO.EndDate}, VehicleId = {rentalDTO.VehicleId} where Id = {rentalDTO.Id}");
 
                 return updatedRows > 0;
             }
@@ -101,7 +102,7 @@ namespace CarRentingApp.Repositories
 
         public async Task<IEnumerable<AgentRentalsDTO>> GetAgentRentals(string userId)
         {
-            var rentals = from r in _dbContext.Rentals
+            var rentals = (from r in _dbContext.Rentals
                           join v in _dbContext.Vehicles on r.VehicleId equals v.Id
                           join vm in _dbContext.VehicleModels on v.VehicleModelId equals vm.Id
                           join u in _dbContext.Users on r.AppUserId equals u.Id
@@ -113,14 +114,14 @@ namespace CarRentingApp.Repositories
                               StartDate = r.StartDate,
                               EndDate = r.EndDate,
                               User = u.FirstName + " " + u.LastName
-                          };
+                          }).AsNoTracking();
 
             return rentals;
         }
 
         public async Task<EditRentalDTO> GetRentalById(int rentalId)
         {
-            var rental = from r in _dbContext.Rentals
+            var rental = (from r in _dbContext.Rentals
                          where r.Id == rentalId
                          select new EditRentalDTO
                          {
@@ -130,7 +131,7 @@ namespace CarRentingApp.Repositories
                              VehicleId = r.VehicleId,
                              Status = r.Status,
                              RejectionReason = r.RejectionReason
-                         };
+                         }).AsNoTracking();
             if (rental.Any())
             {
                 return rental.FirstOrDefault();
@@ -142,7 +143,7 @@ namespace CarRentingApp.Repositories
 
         public async Task<IEnumerable<UserRentalsDTO>> GetUserRentals(string userId, byte? filterByStatus)
         {
-            var rentals = from r in _dbContext.Rentals
+            var rentals = (from r in _dbContext.Rentals
                           join v in _dbContext.Vehicles on r.VehicleId equals v.Id
                           join vm in _dbContext.VehicleModels on v.VehicleModelId equals vm.Id
                           join u in _dbContext.Users on v.AgentId equals u.Id
@@ -158,7 +159,7 @@ namespace CarRentingApp.Repositories
                               Agent = u.FirstName + " " + u.LastName,
                               DaysLeft = ((int)Math.Ceiling((r.EndDate - DateTime.UtcNow).TotalDays) + 1),
                               RejectionReason = r.RejectionReason
-                          };
+                          }).AsNoTracking();
 
             return rentals;
 
@@ -168,7 +169,7 @@ namespace CarRentingApp.Repositories
         {
             try
             {
-                var affecteddRows = _dbContext.Database.ExecuteSqlInterpolated($"Update Rentals Set Status = {RentalStatus.Rejected}, RejectionReason= {rejectionReason} where Id = {rentalId}");
+                var affecteddRows = await _dbContext.Database.ExecuteSqlInterpolatedAsync($"Update Rentals Set Status = {RentalStatus.Rejected}, RejectionReason= {rejectionReason} where Id = {rentalId}");
 
                 return affecteddRows > 0;
             }

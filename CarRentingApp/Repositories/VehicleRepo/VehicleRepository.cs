@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CarRentingApp.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarRentingApp.Repositories
 {
@@ -19,14 +20,14 @@ namespace CarRentingApp.Repositories
 
         public async Task<IEnumerable<MinVehicleDTO>> GetAllVehicles()
         {
-            var vehicles = from v in _dbContext.Vehicles
+            var vehicles = (from v in _dbContext.Vehicles
                            join vm in _dbContext.VehicleModels on v.VehicleModelId equals vm.Id
                            orderby vm.Brand, vm.Model, v.Color
                            select new MinVehicleDTO
                            {
                                Id = v.Id,
                                BrandModel = v.Color + " " + vm.Brand + " " + vm.Model
-                           };
+                           }).AsNoTracking();
             return vehicles;
         }
 
@@ -59,7 +60,7 @@ namespace CarRentingApp.Repositories
 
 
 
-            var rentedVehicles = from r in _dbContext.Rentals
+            var rentedVehicles = (from r in _dbContext.Rentals
                                where r.Status == (byte)RentalStatus.Approved &&
                                ((startDate == null && endDate == null) || (r.StartDate <= endDate && r.EndDate >= startDate))
                                group r by r.VehicleId into groupedRentals
@@ -67,9 +68,9 @@ namespace CarRentingApp.Repositories
                                {
                                    VehicleId = groupedRentals.Key,
                                    Rented = groupedRentals.Count()
-                               };
+                               }).AsNoTracking();
 
-            var allVehicles = from v in _dbContext.Vehicles
+            var allVehicles = (from v in _dbContext.Vehicles
                               join vm in _dbContext.VehicleModels on v.VehicleModelId equals vm.Id
                               join r in rentedVehicles on v.Id equals r.VehicleId into rental
                               from subr in rental.DefaultIfEmpty()
@@ -81,7 +82,7 @@ namespace CarRentingApp.Repositories
                                   Id = v.Id,
                                   BrandModel = v.Color + " " +vm.Brand + " " + vm.Model,
                                   PricePerDay = v.PricePerDay
-                              };
+                              }).AsNoTracking();
 
             return allVehicles;
         }

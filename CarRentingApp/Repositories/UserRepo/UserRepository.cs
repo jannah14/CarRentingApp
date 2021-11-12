@@ -90,7 +90,7 @@ namespace CarRentingApp.Repositories
 
         public async Task<UpdateUserDTO> GetUserById(string userId)
         {
-            var users = from u in _dbContext.Users
+            var users = (from u in _dbContext.Users
                         join ur in _dbContext.UserRoles on u.Id equals ur.UserId
                         join r in _dbContext.Roles on ur.RoleId equals r.Id
                         where u.Id == userId
@@ -102,7 +102,7 @@ namespace CarRentingApp.Repositories
                             Birthday = u.Birthday,
                             PhoneNumber = u.PhoneNumber,
                             Role = r.Name
-                        };
+                        }).AsNoTracking();
 
             if (users.Any())
             {
@@ -114,7 +114,7 @@ namespace CarRentingApp.Repositories
 
         public async Task<List<AllUserDTO>> GetUsers(string adminId)
         {
-            var users = from u in _dbContext.Users
+            var users = (from u in _dbContext.Users
                         join ur in _dbContext.UserRoles on u.Id equals ur.UserId
                         join r in _dbContext.Roles on ur.RoleId equals r.Id
                         where u.Id != adminId
@@ -128,7 +128,7 @@ namespace CarRentingApp.Repositories
                             Email = u.Email,
                             Username = u.UserName,
                             Role = r.Name
-                        };
+                        }).AsNoTracking();
             
             if(users.Any())
             {
