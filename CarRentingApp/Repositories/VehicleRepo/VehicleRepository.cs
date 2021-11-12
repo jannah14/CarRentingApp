@@ -75,7 +75,7 @@ namespace CarRentingApp.Repositories
                               join r in rentedVehicles on v.Id equals r.VehicleId into rental
                               from subr in rental.DefaultIfEmpty()
                               where vm.Type == type
-                                    && (searchStr == null || vm.Brand.Contains(searchStr) || vm.Brand.Contains(searchStr))
+                                    && (searchStr == null || vm.Brand.Contains(searchStr) || vm.Model.Contains(searchStr))
                                     && (v.ItemsInStock > subr.Rented || subr.VehicleId != v.Id)
                               select new VehicleDTO
                               {
