@@ -209,7 +209,7 @@ namespace CarRentingApp.Controllers
         }
 
         [AcceptVerbs("GET", "POST")]
-        public async Task<IActionResult> VerifyStartDate(EditRentalDTO rental)
+        public  IActionResult VerifyStartDate(EditRentalDTO rental)
         {
             if (rental.StartDate < DateTime.UtcNow)
             {
@@ -220,7 +220,7 @@ namespace CarRentingApp.Controllers
         }
 
         [AcceptVerbs("GET", "POST")]
-        public async Task<IActionResult> VerifyEndDate(EditRentalDTO rental)
+        public IActionResult VerifyEndDate(EditRentalDTO rental)
         {
             if (rental.EndDate < DateTime.UtcNow)
             {

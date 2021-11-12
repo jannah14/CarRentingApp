@@ -91,7 +91,7 @@ namespace CarRentingApp.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> CreateUser()
+        public  IActionResult CreateUser()
         {
             var vm = new InputModel();
 
